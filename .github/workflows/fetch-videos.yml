@@ -1,23 +1,21 @@
 name: Fetch Videos
 # 触发 workflow 的事件
 on:
+  # 手动触发
   workflow_dispatch:
+    # 输入参数
+    inputs:
+      bv:
+        description: "Bilibili BV号"
+        required: true
+      part:
+        description: "需要下载的分P"
+        required: false
+      email:
+        description: "邮箱地址，用于在下载完成后或失败时发送邮件通知"
+        required: true
 
 jobs:
-  # 输入参数
-  inputs:
-    - bv:
-      description: "Bilibili BV号"
-      required: true
-
-    -part:
-      description: "需要下载的分P"
-      required: false
-    
-    -email:
-      description: "邮箱地址，用于在下载完成后或失败时发送邮件通知"
-      required: true
-
   Fetch-Videos:
     runs-on: windows-2019
 
@@ -45,7 +43,6 @@ jobs:
       - name: Echo errors...
         run: echo "${{ steps.errors.outputs.content }}"
 
-      
       # 发送邮件
       - name: Send mail
         if: steps.errors.outputs.content != ''
@@ -67,7 +64,7 @@ jobs:
           from: Web Archive
           # HTML内容，从文件读取
           html_body: scripts/error.txt
-      
+
       - name: Send mail
         if: steps.errors.outputs.content == ''
         uses: dawidd6/action-send-mail@v3
