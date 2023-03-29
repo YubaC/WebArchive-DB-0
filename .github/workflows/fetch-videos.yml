@@ -34,6 +34,13 @@ jobs:
           pip install -r requirements.txt
           python download.py ${{ github.event.inputs.bv }} ${{ github.event.inputs.part }}
 
+      - name: Set up Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull --rebase
+
       - name: Read errors...
         id: errors
         uses: juliangruber/read-file-action@v1
@@ -42,6 +49,12 @@ jobs:
 
       - name: Echo errors...
         run: echo "${{ steps.errors.outputs.content }}"
+
+      - name: Auto push
+        run: |
+          git add data/*
+          git commit -m "Add videos"
+          git push
 
       # 发送邮件
       - name: Send mail
