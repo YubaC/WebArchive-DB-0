@@ -1,0 +1,95 @@
+name: Fetch Videos
+# 触发 workflow 的事件
+on:
+  workflow_dispatch:
+
+jobs:
+  # 输入参数
+  inputs:
+    - bv:
+      description: "Bilibili BV号"
+      required: true
+
+    -part:
+      description: "需要下载的分P"
+      required: false
+    
+    -email:
+      description: "邮箱地址，用于在下载完成后或失败时发送邮件通知"
+      required: true
+
+  Fetch-Videos:
+    runs-on: windows-2019
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download videos...
+        run: |
+          cd scripts
+          pip install -r requirements.txt
+          python download.py ${{ github.event.inputs.bv }} ${{ github.event.inputs.part }}
+
+      - name: Read errors...
+        id: errors
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./scripts/errors.txt
+
+      - name: Echo errors...
+        run: echo "${{ steps.errors.outputs.content }}"
+
+      
+      # 发送邮件
+      - name: Send mail
+        if: steps.errors.outputs.content != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # 必需，邮件服务器地址
+          server_address: smtp.office365.com
+          # 必需，邮件服务器端口，默认25 (如果端口为465，则会使用TLS连接)
+          server_port: 587
+          # 可选 (建议): 邮件服务器用户
+          username: ${{secrets.MAIL_USERNAME}}
+          # 可选 (建议): 邮件服务器密码
+          password: ${{secrets.MAIL_PASSWORD}}
+          # 邮件主题
+          subject: 备份失败通知
+          # 收件人地址
+          to: ${{ github.event.inputs.email }}
+          # 必需，发送人全名 (地址可以省略)
+          from: Web Archive
+          # HTML内容，从文件读取
+          html_body: scripts/error.txt
+      
+      - name: Send mail
+        if: steps.errors.outputs.content == ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # 必需，邮件服务器地址
+          server_address: smtp.office365.com
+          # 必需，邮件服务器端口，默认25 (如果端口为465，则会使用TLS连接)
+          server_port: 587
+          # 可选 (建议): 邮件服务器用户
+          username: ${{secrets.MAIL_USERNAME}}
+          # 可选 (建议): 邮件服务器密码
+          password: ${{secrets.MAIL_PASSWORD}}
+          # 邮件主题
+          subject: 备份成功通知
+          # 收件人地址
+          to: ${{ github.event.inputs.email }}
+          # 必需，发送人全名 (地址可以省略)
+          from: Web Archive
+          # 可选，HTML内容，可从文件读取
+          html_body: scripts/finished.txt
+
+      - if: steps.errors.outputs.content != ''
+        run: |
+          stopMarker=$(uuidgen)
+          echo "::$stopMarker::"
