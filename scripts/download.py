@@ -85,9 +85,9 @@ def download_video(bv, part=[], retry=3):
             # 保存视频的文件夹在当前目录下
             print(
                 f"Downloading P{index} ({total_number} in total)... \n")
-            # 使用curl进行下载
+            # 使用you-get进行下载
             os.system(
-                fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
+                fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption -d >..\temp\output_{index}.txt')
             # 如果os.system出错
             if os.path.getsize(os.path.join(os.path.pardir, 'temp', f'output_{index}.txt')) == 0:
                 err_list.append(index)
