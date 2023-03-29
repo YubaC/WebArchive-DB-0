@@ -88,6 +88,13 @@ def download_video(bv, part=[], retry=3):
             # 使用curl进行下载
             os.system(
                 fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
+            # 如果os.system出错
+            if os.path.getsize(os.path.join(os.path.pardir, 'temp', f'output_{index}.txt')) == 0:
+                err_list.append(index)
+                print(f"P{index} failed.\n")
+                print(
+                    '--------------------------------------------------------------------------------')
+                continue
             print(f"P{index} finished.\n")
             print(f"Slicing video...\n")
             # 开一个新的进程，使用FFMPEG把视频拆成小视频，并生成M3U8文件
