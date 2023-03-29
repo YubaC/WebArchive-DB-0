@@ -45,7 +45,7 @@ jobs:
         id: errors
         uses: juliangruber/read-file-action@v1
         with:
-          path: ./scripts/errors.txt
+          path: scripts/errors.txt
 
       - name: Echo errors...
         run: echo "${{ steps.errors.outputs.content }}"
