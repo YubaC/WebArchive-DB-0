@@ -41,11 +41,12 @@ jobs:
           pip install -r requirements.txt
           python download.py ${{ github.event.inputs.bv }} ${{ github.event.inputs.part }}
 
+      # 读取位于scripts\error.txt的错误信息
       - name: Read errors...
         id: errors
         uses: juliangruber/read-file-action@v1
         with:
-          path: scripts/error.txt
+          path: ./scripts/error.txt
 
       - name: Echo errors...
         run: echo "${{ steps.errors.outputs.content }}"
@@ -76,7 +77,7 @@ jobs:
           # 必需，发送人全名 (地址可以省略)
           from: Web Archive
           # HTML内容，从文件读取
-          html_body: scripts/error.txt
+          html_body: file://./scripts/error.txt
 
       - name: Send mail
         if: steps.errors.outputs.content == ''
@@ -97,7 +98,7 @@ jobs:
           # 必需，发送人全名 (地址可以省略)
           from: Web Archive
           # 可选，HTML内容，可从文件读取
-          html_body: scripts/finished.txt
+          html_body: file://./scripts/finished.txt
 
       - if: steps.errors.outputs.content != ''
         run: |
