@@ -166,8 +166,8 @@ def download_video(bv, part=[], retry=3):
             infoJSON = json.load(f)
             f.close()
 
-        part_old = infoJSON["part"]
-    # 合并part_old和part，再从中减去err_list
+        part_old = infoJSON["part_available"]
+    # 合并part_old和parts，再从中减去err_list
     part_available = list(set(part_old+part))
     part_available = [i for i in part_available if i not in err_list]
 
