@@ -124,8 +124,9 @@ def download_video(bv, part=[], retry=3):
             err_list_str = ["P"+str(i) for i in err_list]
             f.write(ERR_LOG.format(
                 bv=bv, err_list=", ".join(err_list_str), retry=RETRY,
-                date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-            f.write(data)
+                date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                + '\n\n\n'
+                + data)
             f.close()
         print(f"Failed to download {err_list}.\n")
         print('Retry failed.\n')
