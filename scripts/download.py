@@ -86,8 +86,10 @@ def download_video(bv, part=[], retry=3):
             print(
                 f"Downloading P{index} ({total_number} in total)... \n")
             # 使用you-get进行下载
+            print(
+                fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
             os.system(
-                fr'..\tools\you-get\you-get.exe https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
+                fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
             # 如果os.system出错
             if os.path.getsize(os.path.join(os.path.pardir, 'temp', f'output_{index}.txt')) == 0:
                 err_list.append(index)
@@ -121,8 +123,9 @@ def download_video(bv, part=[], retry=3):
             # 把int转换成字符串
             err_list_str = ["P"+str(i) for i in err_list]
             f.write(ERR_LOG.format(
-                bv=bv, err_list=" ,".join(err_list_str), retry=RETRY,
+                bv=bv, err_list=", ".join(err_list_str), retry=RETRY,
                 date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            f.write(data)
             f.close()
         print(f"Failed to download {err_list}.\n")
         print('Retry failed.\n')
