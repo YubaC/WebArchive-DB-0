@@ -89,6 +89,8 @@ def download_video(bv, part=[], retry=3):
             print(
                 fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption >..\temp\output_{index}.txt')
             os.system(
+                fr'you-get -i https://www.bilibili.com/video/{bv}?p={index}')
+            os.system(
                 fr'you-get https://www.bilibili.com/video/{bv}?p={index} -o {os.path.join(save_path, "P"+str(index))} --output-filename P{index} --no-caption -d >..\temp\output_{index}.txt')
             # 如果os.system出错
             if os.path.getsize(os.path.join(os.path.pardir, 'temp', f'output_{index}.txt')) == 0:
@@ -121,20 +123,10 @@ def download_video(bv, part=[], retry=3):
         # 写一个错误日志
         with open('error.txt', 'w', encoding='utf-8') as f:
             # 把int转换成字符串
-            # 读取下载失败的视频的日志
-            err_log = '<hr>'
-            for i in err_list:
-                with open(os.path.join(os.path.pardir, 'temp', f'output_{i}.txt'), 'r', encoding='utf-8') as f2:
-                    err_log += f'P{i}:\n' + f2.read()+"\n<hr>"
             err_list_str = ["P"+str(i) for i in err_list]
             f.write(ERR_LOG.format(
                 bv=bv, err_list=", ".join(err_list_str), retry=RETRY,
-                date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-                + '\n\n\n'
-                + str(data)
-                + '\n\n\n'
-                + err_log
-            )
+                date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             f.close()
         print(f"Failed to download {err_list}.\n")
         print('Retry failed.\n')
