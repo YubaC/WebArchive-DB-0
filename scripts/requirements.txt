@@ -1,2 +1,2 @@
 requests
-python-office
+you-get==0.4.1620
